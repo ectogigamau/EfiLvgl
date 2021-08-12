@@ -24,6 +24,7 @@
   DEFINE MICROPYTHON_OVERRIDE = Uefi/Override/MicroPython
   DEFINE ONIGURUMA_PATH       = ../Oniguruma/src
   DEFINE ONIGURUMA_OVERRIDE   = Uefi/Override/Oniguruma/src
+  DEFINE LVGL_PATH            = ../lv_binding_micropython/lvgl/src
 #
 #  VALID_ARCHITECTURES        = IA32 X64
 #
@@ -33,6 +34,7 @@
   MdeModulePkg/MdeModulePkg.dec
   MicroPythonPkg/MicroPythonPkg.dec
   ShellPkg/ShellPkg.dec
+  StdLib/StdLib.dec
 
 [LibraryClasses]
   BaseLib
@@ -167,6 +169,7 @@
   $(MICROPYTHON_PATH)/extmod/modurandom.c
   $(MICROPYTHON_PATH)/extmod/modure.c
   $(MICROPYTHON_PATH)/extmod/moduzlib.c
+  $(MICROPYTHON_PATH)/extmod/moductypes.c
 
 #EFI -- EFI specific code
   Uefi/main.c
@@ -248,6 +251,126 @@
   $(ONIGURUMA_PATH)/utf32_le.c
   $(ONIGURUMA_PATH)/utf8.c
 
+#LVGL
+  Uefi/lv_mpy.c
+
+  $(LVGL_PATH)/lv_misc/lv_anim.c
+  $(LVGL_PATH)/lv_widgets/lv_arc.c
+  $(LVGL_PATH)/lv_misc/lv_area.c
+  $(LVGL_PATH)/lv_misc/lv_async.c
+  $(LVGL_PATH)/lv_widgets/lv_bar.c
+  $(LVGL_PATH)/lv_misc/lv_bidi.c
+  $(LVGL_PATH)/lv_widgets/lv_btn.c
+  $(LVGL_PATH)/lv_widgets/lv_btnmatrix.c
+  $(LVGL_PATH)/lv_widgets/lv_calendar.c
+  $(LVGL_PATH)/lv_widgets/lv_canvas.c
+  $(LVGL_PATH)/lv_widgets/lv_chart.c
+  $(LVGL_PATH)/lv_widgets/lv_checkbox.c
+  $(LVGL_PATH)/lv_misc/lv_color.c
+  $(LVGL_PATH)/lv_widgets/lv_cont.c
+  $(LVGL_PATH)/lv_widgets/lv_cpicker.c
+  $(LVGL_PATH)/lv_misc/lv_debug.c
+  $(LVGL_PATH)/lv_core/lv_disp.c
+  $(LVGL_PATH)/lv_draw/lv_draw_arc.c
+  $(LVGL_PATH)/lv_draw/lv_draw_blend.c
+  $(LVGL_PATH)/lv_draw/lv_draw_img.c
+  $(LVGL_PATH)/lv_draw/lv_draw_label.c
+  $(LVGL_PATH)/lv_draw/lv_draw_line.c
+  $(LVGL_PATH)/lv_draw/lv_draw_mask.c
+  $(LVGL_PATH)/lv_draw/lv_draw_rect.c
+  $(LVGL_PATH)/lv_draw/lv_draw_triangle.c
+  $(LVGL_PATH)/lv_widgets/lv_dropdown.c
+  $(LVGL_PATH)/lv_font/lv_font.c
+  $(LVGL_PATH)/lv_font/lv_font_dejavu_16_persian_hebrew.c
+  $(LVGL_PATH)/lv_font/lv_font_fmt_txt.c
+  $(LVGL_PATH)/lv_font/lv_font_loader.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_8.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_10.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_12.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_12_subpx.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_14.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_16.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_18.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_20.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_22.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_24.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_26.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_28.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_28_compressed.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_30.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_32.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_34.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_36.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_38.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_40.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_42.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_44.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_46.c
+  $(LVGL_PATH)/lv_font/lv_font_montserrat_48.c
+  $(LVGL_PATH)/lv_font/lv_font_simsun_16_cjk.c
+  $(LVGL_PATH)/lv_font/lv_font_unscii_8.c
+  $(LVGL_PATH)/lv_font/lv_font_unscii_16.c
+  $(LVGL_PATH)/lv_misc/lv_fs.c
+  $(LVGL_PATH)/lv_widgets/lv_gauge.c
+  $(LVGL_PATH)/lv_misc/lv_gc.c
+  $(LVGL_PATH)/lv_gpu/lv_gpu_nxp_pxp.c
+  $(LVGL_PATH)/lv_gpu/lv_gpu_nxp_pxp_osa.c
+  $(LVGL_PATH)/lv_gpu/lv_gpu_nxp_vglite.c
+  $(LVGL_PATH)/lv_gpu/lv_gpu_stm32_dma2d.c
+  $(LVGL_PATH)/lv_core/lv_group.c
+  $(LVGL_PATH)/lv_hal/lv_hal_disp.c
+  $(LVGL_PATH)/lv_hal/lv_hal_indev.c
+  $(LVGL_PATH)/lv_hal/lv_hal_tick.c
+  $(LVGL_PATH)/lv_widgets/lv_img.c
+  $(LVGL_PATH)/lv_draw/lv_img_buf.c
+  $(LVGL_PATH)/lv_draw/lv_img_cache.c
+  $(LVGL_PATH)/lv_draw/lv_img_decoder.c
+  $(LVGL_PATH)/lv_widgets/lv_imgbtn.c
+  $(LVGL_PATH)/lv_core/lv_indev.c
+  $(LVGL_PATH)/lv_widgets/lv_keyboard.c
+  $(LVGL_PATH)/lv_widgets/lv_label.c
+  $(LVGL_PATH)/lv_widgets/lv_led.c
+  $(LVGL_PATH)/lv_widgets/lv_line.c
+  $(LVGL_PATH)/lv_widgets/lv_linemeter.c
+  $(LVGL_PATH)/lv_widgets/lv_list.c
+  $(LVGL_PATH)/lv_misc/lv_ll.c
+  $(LVGL_PATH)/lv_misc/lv_log.c
+  $(LVGL_PATH)/lv_misc/lv_math.c
+  $(LVGL_PATH)/lv_misc/lv_mem.c
+  $(LVGL_PATH)/lv_widgets/lv_msgbox.c
+  $(LVGL_PATH)/lv_core/lv_obj.c
+  $(LVGL_PATH)/lv_widgets/lv_objmask.c
+  $(LVGL_PATH)/lv_widgets/lv_objx_templ.c
+  $(LVGL_PATH)/lv_widgets/lv_page.c
+  $(LVGL_PATH)/lv_misc/lv_printf.c
+  $(LVGL_PATH)/lv_core/lv_refr.c
+  $(LVGL_PATH)/lv_widgets/lv_roller.c
+  $(LVGL_PATH)/lv_widgets/lv_slider.c
+  $(LVGL_PATH)/lv_widgets/lv_spinbox.c
+  $(LVGL_PATH)/lv_widgets/lv_spinner.c
+  $(LVGL_PATH)/lv_core/lv_style.c
+  $(LVGL_PATH)/lv_widgets/lv_switch.c
+  $(LVGL_PATH)/lv_widgets/lv_table.c
+  $(LVGL_PATH)/lv_widgets/lv_tabview.c
+  $(LVGL_PATH)/lv_misc/lv_task.c
+  $(LVGL_PATH)/lv_misc/lv_templ.c
+  $(LVGL_PATH)/lv_widgets/lv_textarea.c
+  $(LVGL_PATH)/lv_themes/lv_theme.c
+  $(LVGL_PATH)/lv_themes/lv_theme_empty.c
+  $(LVGL_PATH)/lv_themes/lv_theme_material.c
+  $(LVGL_PATH)/lv_themes/lv_theme_mono.c
+  $(LVGL_PATH)/lv_themes/lv_theme_template.c
+  $(LVGL_PATH)/lv_widgets/lv_tileview.c
+  $(LVGL_PATH)/lv_misc/lv_txt.c
+  $(LVGL_PATH)/lv_misc/lv_txt_ap.c
+  $(LVGL_PATH)/lv_misc/lv_utils.c
+  $(LVGL_PATH)/lv_widgets/lv_win.c
+
+#Drivers
+  ../Drivers/efidirect/EfiMonitor.c
+  ../Drivers/efidirect/EfiInput.c
+  ../Drivers/efidirect/modEfiDirect.c
+
 [Sources.X64]
   $(MICROPYTHON_OVERRIDE)/py/X64/emitnx64.c
   $(MICROPYTHON_OVERRIDE)/py/X64/asmx64.c
@@ -274,18 +397,22 @@
   gEfiBlockIoProtocolGuid          ## SOMETIMES_CONSUMES
   gEfiSmbiosProtocolGuid           ## SOMETIMES_CONSUMES
   gEfiCpuArchProtocolGuid          ## SOMETIMES_CONSUMES
+  gEfiGraphicsOutputProtocolGuid
 
 [Guids]
   gEfiFileSystemVolumeLabelInfoIdGuid
   gEfiDxeServicesTableGuid
   gEfiSasDevicePathGuid
+  
+[Protocols]
+  gEfiSimplePointerProtocolGuid
 
 [Depex]
   TRUE
 
 [BuildOptions]
-  MSFT:*_*_*_CC_FLAGS = /wd4117 /wd4706 /wd4459 /wd4244 /wd4204 /wd4267 /wd4389 /wd4245 /wd4146 /wd4305 /wd4310 /wd4018 /wd4132 /wd4221 /wd4053 /wd4201 /wd4715 /wd4716 /wd4702 /wd4152 /wd4055 /wd4456 /wd4311 /wd4090
-  MSFT:*_*_*_CC_FLAGS = /Oi- /GL-
+  MSFT:*_*_*_CC_FLAGS = /wd4117 /wd4706 /wd4459 /wd4244 /wd4204 /wd4267 /wd4389 /wd4245 /wd4146 /wd4305 /wd4310 /wd4018 /wd4132 /wd4221 /wd4053 /wd4201 /wd4715 /wd4716 /wd4702 /wd4152 /wd4055 /wd4456 /wd4311 /wd4090 /wd4013 /wd4700 /wd4295 /wd4334 /wd4047
+  MSFT:*_*_*_CC_FLAGS = /Oi- /GL- 
 
   # For Oniguruma
   MSFT:*_*_*_CC_FLAGS = /wd4701 /wd4164 /wd4131 /wd4054 /wd4306

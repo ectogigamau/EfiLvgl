@@ -56,8 +56,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define MICROPY_ENABLE_FINALISER                  (1)
 #define MICROPY_GCREGS_SETJMP                     (1)
 #define MICROPY_STACK_CHECK                       (1)
-#define MICROPY_MALLOC_USES_ALLOCATED_SIZE        (1)
-#define MICROPY_MEM_STATS                         (1)
+#define MICROPY_MALLOC_USES_ALLOCATED_SIZE        (0)
+#define MICROPY_MEM_STATS                         (0)
 #define MICROPY_DEBUG_PRINTERS                    (0)
 // Printing debug to stderr may give tests which
 // check stdout a chance to pass, etc.
@@ -125,6 +125,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define MICROPY_PY_UTIME_MP_HAL         (1)
 
 #define MICROPY_PY_UTIME                (1)
+#define MICROPY_PY_UCTYPES              (1)
 
 #define MICROPY_ERROR_REPORTING         (MICROPY_ERROR_REPORTING_DETAILED)
 #define MICROPY_WARNINGS                (1)
@@ -138,6 +139,37 @@ extern const struct _mp_print_t mp_stderr_print;
 #define MICROPY_KBD_EXCEPTION                     (1)
 
 
+//LVGL binding relative
+#define MICROPY_PY_LVGL             (1)
+#define MICROPY_PY_LVGL_EFI_DIRECT  (1)
+#define MICROPY_PY_LVGL_LODEPNG     (0)
+
+extern const struct _mp_obj_module_t mp_module_lvgl;
+extern const struct _mp_obj_module_t mp_module_efidirect;
+
+#if MICROPY_PY_LVGL
+#ifndef MICROPY_INCLUDED_PY_MPSTATE_H
+#define MICROPY_INCLUDED_PY_MPSTATE_H
+#include "../../lv_binding_micropython/lvgl/src/lv_misc/lv_gc.h"
+#undef MICROPY_INCLUDED_PY_MPSTATE_H
+#else
+#include "../../lv_binding_micropython/lvgl/src/lv_misc/lv_gc.h"
+#endif
+#define MICROPY_PY_LVGL_DEF { MP_OBJ_NEW_QSTR(MP_QSTR_lvgl), (mp_obj_t)&mp_module_lvgl },
+    #if MICROPY_PY_LVGL_EFI_DIRECT
+    #define MICROPY_PY_LVGL_EFI_DIRECT_DEF { MP_OBJ_NEW_QSTR(MP_QSTR_efidirect), (mp_obj_t)&mp_module_efidirect },
+    #else
+    #define MICROPY_PY_LVGL_EFI_DIRECT_DEF
+    #endif
+    #if MICROPY_PY_LVGL_LODEPNG
+    #define MICROPY_PY_LVGL_LODEPNG_DEF { MP_OBJ_NEW_QSTR(MP_QSTR_lodepng), (mp_obj_t)&mp_module_lodepng },
+    #else
+    #define MICROPY_PY_LVGL_LODEPNG_DEF
+    #endif
+#else
+    #define LV_ROOTS
+    #define MICROPY_PY_LVGL_DEF
+#endif
 // Just assume Windows is little-endian - mingw32 gcc doesn't
 // define standard endianness macros.
 #define MP_ENDIANNESS_LITTLE (1)
@@ -173,13 +205,19 @@ extern const struct _mp_obj_module_t mp_module__re;
     { MP_OBJ_NEW_QSTR(MP_QSTR__uefi), (mp_obj_t)&mp_module__uefi }, \
     { MP_OBJ_NEW_QSTR(MP_QSTR__ets), (mp_obj_t)&mp_module__ets }, \
     { MP_OBJ_NEW_QSTR(MP_QSTR__re), (mp_obj_t)&mp_module__re }, \
+    MICROPY_PY_LVGL_DEF \
+    MICROPY_PY_LVGL_EFI_DIRECT_DEF
 
+#define MICROPY_PORT_ROOT_POINTERS \
+    LV_ROOTS \
+    void *mp_lv_user_data; \
+    char *readline_hist[50];
 
 #define MICROPY_MPHALPORT_H         "uefi_mphal.h"
 #define MP_STATE_PORT               MP_STATE_VM
 
-#define MICROPY_PORT_ROOT_POINTERS \
-    const char *readline_hist[50]; \
+// #define MICROPY_PORT_ROOT_POINTERS \
+//     const char *readline_hist[50]; \
 
 
 typedef INTN    mp_int_t;

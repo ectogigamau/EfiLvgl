@@ -664,7 +664,7 @@ STATIC mp_obj_t mod_os_ilistdir (size_t n_args, const mp_obj_t *args)
   EFI_STATUS                    status;
   EFI_SCRIPT_FILE_PROTOCOL      *sfp;
   CHAR16                        *path_uni;
-  EFI_FILE_HANDLE               fh;
+  EFI_FILE_HANDLE               fh = NULL;
   mp_obj_listdir_t              *itobj;
   const char                    *path;
   UINTN                         len;
@@ -696,7 +696,7 @@ STATIC mp_obj_t mod_os_ilistdir (size_t n_args, const mp_obj_t *args)
     itobj->iternext  = listdir_next;
   }
 
-  if (EFI_ERROR(status)) {
+  if (EFI_ERROR(status) && fh != NULL) {
     fh->Close(fh);
   }
 
