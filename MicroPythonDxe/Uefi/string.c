@@ -73,3 +73,46 @@ char *strchr(const char *s, int c)
 char *strstr(const char *haystack, const char *needle) {
   return AsciiStrStr(haystack, needle);
 }
+
+
+/** The strncpy function copies not more than n characters (characters that
+    follow a null character are not copied) from the array pointed to by s2 to
+    the array pointed to by s1. If copying takes place between objects that
+    overlap, the behavior is undefined.
+
+    If the array pointed to by s2 is a string that is shorter than n
+    characters, null characters are appended to the copy in the array pointed
+    to by s1, until n characters in all have been written.
+
+    @return   The strncpy function returns the value of s1.
+**/
+char     *strncpy(char * __restrict s1, const char * __restrict s2, size_t n)
+{
+  return AsciiStrnCpyS( s1, n, s2, n);
+}
+
+/** The strcpy function copies the string pointed to by s2 (including the
+    terminating null character) into the array pointed to by s1. If copying
+    takes place between objects that overlap, the behavior is undefined.
+
+    @return   The strcpy function returns the value of s1.
+**/
+char *
+strcpy(char * __restrict s1, const char * __restrict s2)
+{
+  return AsciiStrCpyS( s1, AsciiStrSize(s2), s2);
+}
+
+/** The strcat function appends a copy of the string pointed to by s2
+    (including the terminating null character) to the end of the string pointed
+    to by s1. The initial character of s2 overwrites the null character at the
+    end of s1. If copying takes place between objects that overlap, the
+    behavior is undefined.
+
+    @return   The strcat function returns the value of s1.
+**/
+char *
+strcat(char * __restrict s1, const char * __restrict s2)
+{
+  return AsciiStrCatS( s1, AsciiStrSize(s1) + AsciiStrSize(s2), s2);
+}
