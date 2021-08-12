@@ -1,0 +1,6 @@
+[submodule "MicroPython"]
+	path = MicroPython
+	url = https://github.com/micropython/micropython.git
+[submodule "Oniguruma"]
+	path = Oniguruma
+	url = https://github.com/kkos/oniguruma
