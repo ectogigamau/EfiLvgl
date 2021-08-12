@@ -1,0 +1,291 @@
+## @file
+# MicroPythonDxe.inf
+#
+#  Copyright (c) 2017 - 2018, Intel Corporation. All rights reserved.<BR>
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                 = 0x00010016
+  BASE_NAME                   = MicroPythonDxe
+  FILE_GUID                   = afb93c5c-ebc3-4989-acdc-168021dcd036
+  MODULE_TYPE                 = UEFI_DRIVER
+  VERSION_STRING              = 0.1
+  ENTRY_POINT                 = MicroPythonDriverInitialize
+  UNLOAD_IMAGE                = MicroPythonDriverUnload
+  DEFINE MICROPYTHON_PATH     = ../MicroPython
+  DEFINE MICROPYTHON_OVERRIDE = Uefi/Override/MicroPython
+  DEFINE ONIGURUMA_PATH       = ../Oniguruma/src
+  DEFINE ONIGURUMA_OVERRIDE   = Uefi/Override/Oniguruma/src
+#
+#  VALID_ARCHITECTURES        = IA32 X64
+#
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MicroPythonPkg/MicroPythonPkg.dec
+  ShellPkg/ShellPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  UefiDriverEntryPoint
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiLib
+  IoLib
+  FileHandleLib
+  TimerLib
+  SortLib
+  DevicePathLib
+
+[Pcd]
+  gEfiShellPkgTokenSpaceGuid.PcdShellVendorExtendedDecode
+  gEfiShellPkgTokenSpaceGuid.PcdShellDecodeIScsiMapNames
+  gEfiShellPkgTokenSpaceGuid.PcdUsbExtendedDecode
+
+[Sources]
+#MicroPython core code
+  $(MICROPYTHON_PATH)/py/argcheck.c
+  $(MICROPYTHON_PATH)/py/asmbase.c
+  $(MICROPYTHON_PATH)/py/bc.c
+  $(MICROPYTHON_PATH)/py/binary.c
+  $(MICROPYTHON_PATH)/py/builtinevex.c
+  $(MICROPYTHON_PATH)/py/builtinhelp.c
+  $(MICROPYTHON_PATH)/py/builtinimport.c
+  $(MICROPYTHON_PATH)/py/compile.c
+  $(MICROPYTHON_PATH)/py/emitbc.c
+  $(MICROPYTHON_PATH)/py/emitcommon.c
+  $(MICROPYTHON_PATH)/py/emitglue.c
+  $(MICROPYTHON_PATH)/py/formatfloat.c
+  $(MICROPYTHON_PATH)/py/frozenmod.c
+  $(MICROPYTHON_PATH)/py/gc.c
+  $(MICROPYTHON_PATH)/py/lexer.c
+  $(MICROPYTHON_PATH)/py/malloc.c
+  $(MICROPYTHON_PATH)/py/map.c
+  $(MICROPYTHON_PATH)/py/modarray.c
+  $(MICROPYTHON_PATH)/py/modbuiltins.c
+  $(MICROPYTHON_PATH)/py/modcmath.c
+  $(MICROPYTHON_PATH)/py/modcollections.c
+  $(MICROPYTHON_PATH)/py/modgc.c
+  $(MICROPYTHON_PATH)/py/modio.c
+  $(MICROPYTHON_PATH)/py/modmath.c
+  $(MICROPYTHON_PATH)/py/modmicropython.c
+  $(MICROPYTHON_PATH)/py/modstruct.c
+  $(MICROPYTHON_PATH)/py/modsys.c
+  $(MICROPYTHON_PATH)/py/modthread.c
+  $(MICROPYTHON_PATH)/py/moduerrno.c
+  $(MICROPYTHON_PATH)/py/mpprint.c
+  $(MICROPYTHON_PATH)/py/mpstate.c
+  $(MICROPYTHON_PATH)/py/mpz.c
+  $(MICROPYTHON_PATH)/py/nativeglue.c
+  $(MICROPYTHON_PATH)/py/nlrsetjmp.c
+  $(MICROPYTHON_PATH)/py/obj.c
+  $(MICROPYTHON_PATH)/py/objarray.c
+  $(MICROPYTHON_PATH)/py/objattrtuple.c
+  $(MICROPYTHON_PATH)/py/objbool.c
+  $(MICROPYTHON_PATH)/py/objboundmeth.c
+  $(MICROPYTHON_PATH)/py/objcell.c
+  $(MICROPYTHON_PATH)/py/objclosure.c
+  $(MICROPYTHON_PATH)/py/objcomplex.c
+  $(MICROPYTHON_PATH)/py/objdeque.c
+  $(MICROPYTHON_PATH)/py/objdict.c
+  $(MICROPYTHON_PATH)/py/objenumerate.c
+  $(MICROPYTHON_PATH)/py/objexcept.c
+  $(MICROPYTHON_PATH)/py/objfilter.c
+  $(MICROPYTHON_PATH)/py/objfloat.c
+  $(MICROPYTHON_PATH)/py/objfun.c
+  $(MICROPYTHON_PATH)/py/objgenerator.c
+  $(MICROPYTHON_PATH)/py/objgetitemiter.c
+  $(MICROPYTHON_PATH)/py/objint.c
+  $(MICROPYTHON_PATH)/py/objint_longlong.c
+  $(MICROPYTHON_PATH)/py/objint_mpz.c
+  $(MICROPYTHON_PATH)/py/objlist.c
+  $(MICROPYTHON_PATH)/py/objmap.c
+  $(MICROPYTHON_PATH)/py/objmodule.c
+  $(MICROPYTHON_PATH)/py/objnamedtuple.c
+  $(MICROPYTHON_PATH)/py/objnone.c
+  $(MICROPYTHON_PATH)/py/objobject.c
+  $(MICROPYTHON_PATH)/py/objpolyiter.c
+  $(MICROPYTHON_PATH)/py/objproperty.c
+  $(MICROPYTHON_PATH)/py/objrange.c
+  $(MICROPYTHON_PATH)/py/objreversed.c
+  $(MICROPYTHON_PATH)/py/objset.c
+  $(MICROPYTHON_PATH)/py/objsingleton.c
+  $(MICROPYTHON_PATH)/py/objslice.c
+  $(MICROPYTHON_PATH)/py/objstr.c
+  $(MICROPYTHON_PATH)/py/objstringio.c
+  $(MICROPYTHON_PATH)/py/objstrunicode.c
+  $(MICROPYTHON_PATH)/py/objtuple.c
+  $(MICROPYTHON_PATH)/py/objtype.c
+  $(MICROPYTHON_PATH)/py/objzip.c
+  $(MICROPYTHON_PATH)/py/opmethods.c
+  $(MICROPYTHON_PATH)/py/parse.c
+  $(MICROPYTHON_PATH)/py/parsenum.c
+  $(MICROPYTHON_PATH)/py/parsenumbase.c
+  $(MICROPYTHON_PATH)/py/persistentcode.c
+  $(MICROPYTHON_PATH)/py/pystack.c
+  $(MICROPYTHON_PATH)/py/qstr.c
+  $(MICROPYTHON_PATH)/py/reader.c
+  $(MICROPYTHON_PATH)/py/repl.c
+  $(MICROPYTHON_PATH)/py/runtime.c
+  $(MICROPYTHON_PATH)/py/runtime_utils.c
+  $(MICROPYTHON_PATH)/py/scheduler.c
+  $(MICROPYTHON_PATH)/py/scope.c
+  $(MICROPYTHON_PATH)/py/sequence.c
+  $(MICROPYTHON_PATH)/py/showbc.c
+  $(MICROPYTHON_PATH)/py/smallint.c
+  $(MICROPYTHON_PATH)/py/stackctrl.c
+  $(MICROPYTHON_PATH)/py/stream.c
+  $(MICROPYTHON_PATH)/py/unicode.c
+  $(MICROPYTHON_PATH)/py/vm.c
+  $(MICROPYTHON_PATH)/py/vstr.c
+  $(MICROPYTHON_PATH)/py/warning.c
+
+#Override for EFI
+  $(MICROPYTHON_OVERRIDE)/py/nlr.c
+
+#lib
+  $(MICROPYTHON_PATH)/lib/mp-readline/readline.c
+  $(MICROPYTHON_PATH)/lib/timeutils/timeutils.c
+  $(MICROPYTHON_PATH)/lib/utils/printf.c
+
+# extmod
+  $(MICROPYTHON_PATH)/extmod/modubinascii.c
+  $(MICROPYTHON_PATH)/extmod/moduhashlib.c
+  $(MICROPYTHON_PATH)/extmod/moduheapq.c
+  $(MICROPYTHON_PATH)/extmod/modujson.c
+  $(MICROPYTHON_PATH)/extmod/modurandom.c
+  $(MICROPYTHON_PATH)/extmod/modure.c
+  $(MICROPYTHON_PATH)/extmod/moduzlib.c
+
+#EFI -- EFI specific code
+  Uefi/main.c
+  Uefi/use.c
+  Uefi/usf.c
+  Uefi/sfsmapping.c
+  Uefi/file.c
+  Uefi/gccollect.c
+  Uefi/lexerfp.c
+  Uefi/objuefi.c
+  Uefi/repl.c
+  Uefi/uefi_mphal.c
+  Uefi/misc.c
+  Uefi/modre.c
+  Uefi/string.c
+
+#Socket support
+  Uefi/moduefi.c
+  Uefi/modets.c
+  Uefi/modtime.c
+  Uefi/modos.c
+
+#Platform specific
+  Uefi/modmachine.c
+
+#Regular Expression: Oniguruma
+  Uefi/onigurumaglue.c
+  $(ONIGURUMA_PATH)/ascii.c
+  $(ONIGURUMA_PATH)/big5.c
+  $(ONIGURUMA_PATH)/cp1251.c
+  $(ONIGURUMA_PATH)/euc_jp.c
+  $(ONIGURUMA_PATH)/euc_jp_prop.c
+  $(ONIGURUMA_PATH)/euc_kr.c
+  $(ONIGURUMA_PATH)/euc_tw.c
+  $(ONIGURUMA_PATH)/gb18030.c
+  $(ONIGURUMA_PATH)/iso8859_1.c
+  $(ONIGURUMA_PATH)/iso8859_10.c
+  $(ONIGURUMA_PATH)/iso8859_11.c
+  $(ONIGURUMA_PATH)/iso8859_13.c
+  $(ONIGURUMA_PATH)/iso8859_14.c
+  $(ONIGURUMA_PATH)/iso8859_15.c
+  $(ONIGURUMA_PATH)/iso8859_16.c
+  $(ONIGURUMA_PATH)/iso8859_2.c
+  $(ONIGURUMA_PATH)/iso8859_3.c
+  $(ONIGURUMA_PATH)/iso8859_4.c
+  $(ONIGURUMA_PATH)/iso8859_5.c
+  $(ONIGURUMA_PATH)/iso8859_6.c
+  $(ONIGURUMA_PATH)/iso8859_7.c
+  $(ONIGURUMA_PATH)/iso8859_8.c
+  $(ONIGURUMA_PATH)/iso8859_9.c
+  $(ONIGURUMA_PATH)/koi8.c
+  $(ONIGURUMA_PATH)/koi8_r.c
+  $(ONIGURUMA_PATH)/onig_init.c
+  $(ONIGURUMA_PATH)/regcomp.c
+  $(ONIGURUMA_PATH)/regenc.c
+  $(ONIGURUMA_PATH)/regerror.c
+  #$(ONIGURUMA_PATH)/regexec.c
+  $(ONIGURUMA_OVERRIDE)/regexec.c
+  $(ONIGURUMA_PATH)/regext.c
+  $(ONIGURUMA_PATH)/reggnu.c
+  #$(ONIGURUMA_PATH)/regparse.c
+  $(ONIGURUMA_OVERRIDE)/regparse.c
+  $(ONIGURUMA_PATH)/regposerr.c
+  $(ONIGURUMA_PATH)/regposix.c
+  $(ONIGURUMA_PATH)/regsyntax.c
+  $(ONIGURUMA_PATH)/regtrav.c
+  $(ONIGURUMA_PATH)/regversion.c
+  $(ONIGURUMA_PATH)/sjis.c
+  $(ONIGURUMA_PATH)/sjis_prop.c
+  $(ONIGURUMA_PATH)/st.c
+  $(ONIGURUMA_PATH)/unicode.c
+  $(ONIGURUMA_PATH)/unicode_unfold_key.c
+  $(ONIGURUMA_PATH)/unicode_fold1_key.c
+  $(ONIGURUMA_PATH)/unicode_fold2_key.c
+  $(ONIGURUMA_PATH)/unicode_fold3_key.c
+  $(ONIGURUMA_PATH)/utf16_be.c
+  $(ONIGURUMA_PATH)/utf16_le.c
+  $(ONIGURUMA_PATH)/utf32_be.c
+  $(ONIGURUMA_PATH)/utf32_le.c
+  $(ONIGURUMA_PATH)/utf8.c
+
+[Sources.X64]
+  $(MICROPYTHON_OVERRIDE)/py/X64/emitnx64.c
+  $(MICROPYTHON_OVERRIDE)/py/X64/asmx64.c
+  $(MICROPYTHON_OVERRIDE)/py/X64/nlrsetjmp.nasm
+
+[Sources.IA32]
+  $(MICROPYTHON_PATH)/py/emitnx86.c
+  $(MICROPYTHON_PATH)/py/asmx86.c
+  $(MICROPYTHON_OVERRIDE)/py/Ia32/nlrsetjmp.nasm
+
+  # Compiler helper (C RunTime) functions
+  Uefi/Ia32/Intrinsic.c | MSFT
+
+[Protocols]
+  gEfiScriptEngineProtocolGuid     ## PRODUCES
+  gEfiScriptFileProtocolGuid       ## PRODUCES
+  gEfiShellProtocolGuid            ## SOMETIMES_CONSUMES
+  gEfiLoadedImageProtocolGuid      ## SOMETIMES_CONSUMES
+  gEfiSimpleFileSystemProtocolGuid ## SOMETIMES_CONSUMES
+  gEfiDevicePathProtocolGuid       ## SOMETIMES_CONSUMES
+  gEdkiiVirtualConsoleProtocolGuid ## SOMETIMES_CONSUMES
+  gEfiRngProtocolGuid              ## SOMETIMES_CONSUMES
+  gEfiUsbIoProtocolGuid            ## SOMETIMES_CONSUMES
+  gEfiBlockIoProtocolGuid          ## SOMETIMES_CONSUMES
+  gEfiSmbiosProtocolGuid           ## SOMETIMES_CONSUMES
+  gEfiCpuArchProtocolGuid          ## SOMETIMES_CONSUMES
+
+[Guids]
+  gEfiFileSystemVolumeLabelInfoIdGuid
+  gEfiDxeServicesTableGuid
+  gEfiSasDevicePathGuid
+
+[Depex]
+  TRUE
+
+[BuildOptions]
+  MSFT:*_*_*_CC_FLAGS = /wd4117 /wd4706 /wd4459 /wd4244 /wd4204 /wd4267 /wd4389 /wd4245 /wd4146 /wd4305 /wd4310 /wd4018 /wd4132 /wd4221 /wd4053 /wd4201 /wd4715 /wd4716 /wd4702 /wd4152 /wd4055 /wd4456 /wd4311 /wd4090
+  MSFT:*_*_*_CC_FLAGS = /Oi- /GL-
+
+  # For Oniguruma
+  MSFT:*_*_*_CC_FLAGS = /wd4701 /wd4164 /wd4131 /wd4054 /wd4306

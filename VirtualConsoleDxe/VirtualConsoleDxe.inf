@@ -1,0 +1,67 @@
+## @file
+#  This module will install Simple Text Input (Ex) protocol and Simple Test Output
+#  protocols to emulate a console behavior.
+#
+#  Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = VirtualConsoleDxe
+  FILE_GUID                      = FF57961C-6916-41C7-AFD2-BE3DC2DE591F
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InitializeVirtualConsole
+  UNLOAD_IMAGE                   = VirtualConsoleUnload
+
+[Sources]
+  VirtualConOut.c
+  VirtualConIn.c
+  VirtualConsole.c
+  VirtualConsole.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MicroPythonPkg/MicroPythonPkg.dec
+
+[LibraryClasses]
+  DevicePathLib
+  UefiRuntimeServicesTableLib
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  ReportStatusCodeLib
+  UefiLib
+  UefiDriverEntryPoint
+  DebugLib
+  PcdLib
+  BaseLib
+
+[Guids]
+  ## PRODUCES ## Variable:L"ConIn"
+  ## PRODUCES ## Variable:L"ConOut"
+  ## PRODUCES ## Variable:L"ErrOut"
+  gEfiGlobalVariableGuid
+  gEfiConsoleInDeviceGuid
+  gEfiConsoleOutDeviceGuid
+
+[Protocols]
+  gEfiDevicePathProtocolGuid                    ## BY_START
+  gEfiSimpleTextInProtocolGuid                  ## BY_START
+  gEfiSimpleTextInputExProtocolGuid             ## BY_START
+  gEfiSimpleTextOutProtocolGuid                 ## BY_START
+  gEdkiiVirtualConsoleProtocolGuid              ## BY_START
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  VirtualConsoleDxeExtra.uni
+[Depex]
+  TRUE
