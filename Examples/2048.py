@@ -280,26 +280,10 @@ class GuiItem():
 	def set_pos(self, i, j):
 		#
 		# Set position with animation:
-		#  self.panel.set_x(PADDING_PX + i * (GUI_ITEM_SIZE_PX + PADDING_PX))
-		#  self.panel.set_y(PADDING_PX + j * (GUI_ITEM_SIZE_PX + PADDING_PX))
 		#
 		self.panel.set_x(PADDING_PX + i * (GUI_ITEM_SIZE_PX + PADDING_PX))
 		self.panel.set_y(PADDING_PX + j * (GUI_ITEM_SIZE_PX + PADDING_PX))
-		#a = lv.anim_t()
-		#a.init()
-		#a.set_var(self.panel)
-		#a.set_values(self.panel.get_x(), PADDING_PX + i * (GUI_ITEM_SIZE_PX + PADDING_PX))
-		#a.set_time(ANIM_MOVE_TIME)
-		#a.set_custom_exec_cb(lambda a,val: anim_x_cb(self.panel,val))
-		#lv.anim_t.start(a)
-#
-		#a = lv.anim_t()
-		#a.init()
-		#a.set_var(self.panel)
-		#a.set_values(self.panel.get_y(), PADDING_PX + j * (GUI_ITEM_SIZE_PX + PADDING_PX))
-		#a.set_time(ANIM_MOVE_TIME)
-		#a.set_custom_exec_cb(lambda a,val: anim_y_cb(self.panel,val))
-		#lv.anim_t.start(a)
+
 
 	def set_number(self, num):
 		color = ELEMENT_COLOR.get(num, 0xFFFFFF)
@@ -497,7 +481,6 @@ class Board:
 		self.item_moved = True
 
 		item = self.items[x][y]
-		#print("del: " + str(x) + " " + str(y))
 		item.set_pos(new_x, new_y)
 		self.items[new_x][new_y].set_value(self.items[new_x][new_y].get_value() + item.get_value())
 		
