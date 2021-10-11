@@ -359,6 +359,7 @@ class Board:
 	def move_left(self):
 		for y in range(N):
 
+			# Compress
 			self.compress_x(True, y)
 
 			# Join neighbors
@@ -381,8 +382,7 @@ class Board:
 			self.compress_x(False, y)
 		
 	def compress_y(self, up, x):
-		if up:
-			# Compress           
+		if up:       
 			for y in range(1, N):
 				if self.exist(x, y):
 					for i in reversed(range(0, y)):
@@ -437,14 +437,6 @@ class Board:
 	def exist(self, x, y):
 		return self.items[x][y] != None
 
-	def no_free_item(self):
-		count = 0
-		for x in range(N):
-			for y in range(N):
-				if self.exist(x, y):
-					count += 1
-		return count == N*N
-
 	def add(self, x, y):
 		item = Item(x, y, self.gui_board)
 		item.set_value(DEFAULT_VALUE)
@@ -474,15 +466,16 @@ class Board:
 		
 		self.items[x][y] = None
 
-	def join(self, new_x, new_y, x, y):    
-		if self.items[new_x][new_y].get_value() != self.items[x][y].get_value():
+	def join(self, new_x, new_y, x, y):  
+		old_item = self.items[x][y]  
+		new_item = self.items[new_x][new_y]
+		if old_item.get_value() != new_item.get_value():
 			return
 
 		self.item_moved = True
 
-		item = self.items[x][y]
-		item.set_pos(new_x, new_y)
-		self.items[new_x][new_y].set_value(self.items[new_x][new_y].get_value() + item.get_value())
+		old_item.set_pos(new_x, new_y)
+		new_item.set_value(new_item.get_value() + old_item.get_value())
 		
 		self.delete(x, y)
 
@@ -508,13 +501,18 @@ class Board:
 		self.add_random()
 		self.add_random()
 
+	def get_items(self):
+		for line in self.items:
+			for item in line:
+				if item:
+					yield item
+
 	def check_win(self):
 		win = False
-		for x in range(N):
-			for y in range(N):
-				if self.exist(x, y) and self.items[x][y].get_value() == WIN_VALUE:
-					win = True
-					break
+		for item in self.get_items():
+			if item.get_value() == WIN_VALUE:
+				win = True
+				break
 
 		if win:
 			self.game_overed = True
@@ -528,10 +526,8 @@ class Board:
 
 	def check_game_over(self):
 		count = 0
-		for x in range(N):
-			for y in range(N):
-				if self.exist(x, y):
-					count += 1
+		for item in self.get_items():
+			count += 1
 		
 		if count == N * N:
 			self.game_overed = True
@@ -546,12 +542,12 @@ class Board:
 
 	def debug_out(self):
 		print("------------------------------------------------")
-		for y in range(N):
-			for x in range(N):
-				if not self.exist(x, y):
+		for line in self.items:
+			for item in line:
+				if not item:
 					print("[    ]", end="")
 				else:
-					print("[%.4d]" % self.items[x][y].get_value(), end="")
+					print("[%.4d]" % item.get_value(), end="")
 			print("")
 
 def create_close_button(parent):
