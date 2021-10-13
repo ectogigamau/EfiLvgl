@@ -69,21 +69,6 @@ def close_event_handler(source,evt):
 	if evt == lv.EVENT.CLICKED:
 		CLOSE_FLAG = True
 
-def anim_x_cb(object, v):
-	object.set_x(v)
-
-def anim_y_cb(object, v):
-	object.set_y(v)
-
-def anim_w_cb(object, v):
-	object.set_width(v)
-
-def anim_h_cb(object, v):
-	object.set_height(v)
-
-def anim_del_cb(object, v):
-	object.delete()
-
 def mbox_event_cb(obj, evt):
 	if evt == lv.EVENT.VALUE_CHANGED:
 		# a button was clicked 
@@ -155,7 +140,7 @@ class Screen():
 	def get_last_key(self):
 		return lv.indev_t.get_key(self.kb_indev)
 
-	def run(self):
+	def run(self, callback = None):
 		global key_up_event
 		# Load the screen
 		lv.scr_load(self.scr)
@@ -171,6 +156,9 @@ class Screen():
 				key_up_event = False
 			if CLOSE_FLAG:
 				break
+
+			if callback:
+				callback()
 
 #
 # Gui Board
@@ -237,7 +225,7 @@ class GuiItem():
 		a.set_var(panel)
 		a.set_values(panel.get_x() + GUI_ITEM_SIZE_PX//2, panel.get_x())
 		a.set_time(ANIM_INIT_TIME)
-		a.set_custom_exec_cb(lambda a,val: anim_x_cb(panel,val))
+		a.set_custom_exec_cb(lambda a,val: panel.set_x(val))
 		lv.anim_t.start(a)
 
 		a = lv.anim_t()
@@ -245,7 +233,7 @@ class GuiItem():
 		a.set_var(panel)
 		a.set_values(panel.get_y() + GUI_ITEM_SIZE_PX//2, panel.get_y())
 		a.set_time(ANIM_INIT_TIME)
-		a.set_custom_exec_cb(lambda a,val: anim_y_cb(panel,val))
+		a.set_custom_exec_cb(lambda a,val: panel.set_y(val))
 		lv.anim_t.start(a)
 
 		a = lv.anim_t()
@@ -253,7 +241,7 @@ class GuiItem():
 		a.set_var(panel)
 		a.set_values(0, GUI_ITEM_SIZE_PX)
 		a.set_time(ANIM_INIT_TIME)
-		a.set_custom_exec_cb(lambda a,val: anim_w_cb(panel,val))
+		a.set_custom_exec_cb(lambda a,val: panel.set_width(val))
 		lv.anim_t.start(a)
 
 		a = lv.anim_t()
@@ -261,7 +249,7 @@ class GuiItem():
 		a.set_var(panel)
 		a.set_values(0, GUI_ITEM_SIZE_PX)
 		a.set_time(ANIM_INIT_TIME)
-		a.set_custom_exec_cb(lambda a,val: anim_h_cb(panel,val))
+		a.set_custom_exec_cb(lambda a,val: panel.set_height(val))
 		lv.anim_t.start(a)
 
 		self.panel = panel
@@ -281,9 +269,23 @@ class GuiItem():
 		#
 		# Set position with animation:
 		#
-		self.panel.set_x(PADDING_PX + i * (GUI_ITEM_SIZE_PX + PADDING_PX))
-		self.panel.set_y(PADDING_PX + j * (GUI_ITEM_SIZE_PX + PADDING_PX))
+		#self.panel.set_x(PADDING_PX + i * (GUI_ITEM_SIZE_PX + PADDING_PX))
+		#self.panel.set_y(PADDING_PX + j * (GUI_ITEM_SIZE_PX + PADDING_PX))
+		a = lv.anim_t()
+		a.init()
+		a.set_var(self.panel)
+		a.set_values(self.panel.get_x(), PADDING_PX + i * (GUI_ITEM_SIZE_PX + PADDING_PX))
+		a.set_time(ANIM_MOVE_TIME)
+		a.set_custom_exec_cb(lambda a,val: self.panel.set_x(val))
+		lv.anim_t.start(a)
 
+		a = lv.anim_t()
+		a.init()
+		a.set_var(self.panel)
+		a.set_values(self.panel.get_y(), PADDING_PX + j * (GUI_ITEM_SIZE_PX + PADDING_PX))
+		a.set_time(ANIM_MOVE_TIME)
+		a.set_custom_exec_cb(lambda a,val: self.panel.set_y(val))
+		lv.anim_t.start(a)
 
 	def set_number(self, num):
 		color = ELEMENT_COLOR.get(num, 0xFFFFFF)
@@ -295,14 +297,44 @@ class GuiItem():
 		self.panel.delete()
 
 #
+# Deleting an object while the animation is running causes it to hang.
+# This class hides the object and waits for a while before actually deleting the object. 
+#
+class ItemTrash():
+	del_list = []
+	WAIT_TIME = 1000
+	def __init__(self):
+		pass
+	
+	def add(self, item):
+		panel = item.gui_item.panel
+		self.del_list.append([self.WAIT_TIME, panel])
+		item.gui_item.panel.set_hidden(True)
+		item.gui_item.panel = None
+		del item
+
+	def deffered_delete(self):
+		for element in self.del_list:
+			# decrement time 
+			element[0] -= 1
+			if element[0] == 0:
+				item = element[1]
+				self.del_list.remove(element)
+				item.delete()
+
+#
 # Logic
 #
 
 class Item:
 	value = 0
 	gui_item = None
+	x = 0
+	y = 0
 
 	def __init__(self, i, j, gui_board):
+		self.x = i
+		self.y = j
 		self.gui_item = GuiItem(gui_board, i, j);
 
 	def get_value(self):
@@ -313,12 +345,17 @@ class Item:
 		self.gui_item.set_number(value)
 
 	def set_pos(self, x, y):
-		self.gui_item.set_pos(x, y)
+		self.x = x
+		self.y = y
+	
+	def apply_pos(self):
+		self.gui_item.set_pos(self.x, self.y)
 
 
 class Board:
 	gui_board = None
 	items = []
+	trash = None
 
 	# Flags
 	item_moved = False
@@ -333,6 +370,7 @@ class Board:
 			self.items.append(line)
 		
 		self.gui_board = GuiBoard(scr)
+		self.trash = ItemTrash()
 		
 	def compress_x(self, left, y):
 		if left:
@@ -429,9 +467,13 @@ class Board:
 		move_func = {'u': self.move_up, 'd': self.move_down, 'l': self.move_left, 'r': self.move_right}
 		move_func[c]()
 
+		self.check_game_over()
+
 		if self.item_moved:
+			for item in self.get_items():
+				item.apply_pos()
+
 			self.check_win()
-			self.check_game_over()
 			self.add_random()
 
 	def exist(self, x, y):
@@ -441,6 +483,7 @@ class Board:
 		item = Item(x, y, self.gui_board)
 		item.set_value(DEFAULT_VALUE)
 		self.items[x][y] = item
+		return item
 
 	def add_random(self):
 		# Save the empty items to list
@@ -455,15 +498,11 @@ class Board:
 
 		x = item_list[index][0]
 		y = item_list[index][1]
-		self.add(x, y)  
+		return self.add(x, y)
 
 	def delete(self, x, y):
 		item = self.items[x][y]
-		#force delete gui object
-		item.gui_item.panel.delete()
-		item.gui_item.panel = None
-		del item
-		
+		self.trash.add(item)
 		self.items[x][y] = None
 
 	def join(self, new_x, new_y, x, y):  
@@ -528,15 +567,15 @@ class Board:
 		count = 0
 		for item in self.get_items():
 			count += 1
-		
-		if count == N * N:
+
+		if count >= N * N:
 			self.game_overed = True
 			btns = ["OK", ""]
 			mbox1 = lv.msgbox(lv.scr_act())
 			mbox1.set_text("Game over!")
 			mbox1.add_btns(btns)
 			mbox1.set_width(200)
-			mbox1.set_event_cb(self.mbox_event_cb)
+			mbox1.set_event_cb(mbox_event_cb)
 			mbox1.align(None, lv.ALIGN.CENTER, 0, 0)  # Align to the corner
 
 
@@ -589,11 +628,11 @@ def set_key(key):
 	global board
 	if key == lv.KEY.UP:
 		board.move('u')
-	if key == lv.KEY.DOWN:
+	elif key == lv.KEY.DOWN:
 		board.move('d')
-	if key == lv.KEY.LEFT:
+	elif key == lv.KEY.LEFT:
 		board.move('l')
-	if key == lv.KEY.RIGHT:
+	elif key == lv.KEY.RIGHT:
 		board.move('r')
 
 def reset_event_handler(source, evt):
@@ -617,7 +656,7 @@ def main():
 	board = Board(scr)
 	board.new_game()
 
-	screen.run()
+	screen.run(board.trash.deffered_delete)
 
 if __name__ == "__main__":
 	main()
